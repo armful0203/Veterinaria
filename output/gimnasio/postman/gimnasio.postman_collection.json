@@ -1,0 +1,909 @@
+{
+  "info": {
+    "name": "Gimnasio - Opcion 5",
+    "description": "Ejecutar en orden con Collection Runner. Crea y borra registros de prueba propios; no depende de ids del script.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:9091"
+    }
+  ],
+  "item": [
+    {
+      "name": "Socio",
+      "item": [
+        {
+          "name": "01 - Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/socio",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman\",\n  \"plan\": \"mensual\",\n  \"mensualidad\": 30.0,\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"socioId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 - Traer uno",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 - Editar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman editada\",\n  \"plan\": \"mensual\",\n  \"mensualidad\": 30.0,\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 - Ingresos activos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/ingresos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Ingreso numerico\", () => pm.expect(pm.response.json()).to.be.a(\"number\"));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 - Desactivar",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}/desactivar"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Inactivo\", () => pm.expect(pm.response.json().activo).to.eql(false));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 - Desactivar otra vez (409)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}/desactivar"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 - Eliminar registro de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 - Traer eliminado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 - Editar eliminado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman\",\n  \"plan\": \"mensual\",\n  \"mensualidad\": 30.0,\n  \"activo\": true\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 - Eliminar inexistente (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 - desactivar inexistente (404)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/socio/{{socioId}}/desactivar"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "ClaseGrupal",
+      "item": [
+        {
+          "name": "01 - Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clase",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman\",\n  \"instructor\": \"Maria Ruiz\",\n  \"horario\": \"Lunes 18:00\",\n  \"cupos\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"claseId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 - Traer uno",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 - Editar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman editada\",\n  \"instructor\": \"Maria Ruiz\",\n  \"horario\": \"Lunes 18:00\",\n  \"cupos\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 - Con cupos ordenados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/con-cupos"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "const clases = pm.response.json();",
+                  "pm.test(\"Cupos positivos y orden descendente\", () => { clases.forEach((c,i) => { pm.expect(c.cupos).to.be.above(0); if(i) pm.expect(clases[i-1].cupos).to.be.at.least(c.cupos); }); });"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 - Inscribir ultimo cupo",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}/inscribir"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Sin cupos\", () => pm.expect(pm.response.json().cupos).to.eql(0));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 - Inscribir sin cupos (409)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}/inscribir"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 - Cancelar inscripcion",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}/cancelar-inscripcion"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Cupo devuelto\", () => pm.expect(pm.response.json().cupos).to.eql(1));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 - Eliminar registro de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 - Traer eliminado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 - Editar eliminado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman\",\n  \"instructor\": \"Maria Ruiz\",\n  \"horario\": \"Lunes 18:00\",\n  \"cupos\": 1\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 - Eliminar inexistente (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 - inscribir inexistente (404)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}/inscribir"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 - cancelar-inscripcion inexistente (404)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/clase/{{claseId}}/cancelar-inscripcion"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "name": "Maquina",
+      "item": [
+        {
+          "name": "01 - Listar",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "02 - Crear",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/maquina",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman\",\n  \"marca\": \"Technogym\",\n  \"anioCompra\": 2019,\n  \"enMantenimiento\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 201\", () => pm.response.to.have.status(201));",
+                  "pm.collectionVariables.set(\"maquinaId\", pm.response.json().id);"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "03 - Traer uno",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "04 - Editar",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman editada\",\n  \"marca\": \"Technogym\",\n  \"anioCompra\": 2019,\n  \"enMantenimiento\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "05 - Operativas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/operativas"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Solo operativas\", () => pm.response.json().forEach(m => pm.expect(m.enMantenimiento).to.eql(false)));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "06 - Antiguas",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/antiguas?anios=5"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"Mas de cinco anios\", () => pm.response.json().forEach(m => pm.expect(new Date().getFullYear()-m.anioCompra).to.be.above(5)));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "07 - Mantenimiento",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}/mantenimiento"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 200\", () => pm.response.to.have.status(200));",
+                  "pm.test(\"En mantenimiento\", () => pm.expect(pm.response.json().enMantenimiento).to.eql(true));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "08 - Mantenimiento repetido (409)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}/mantenimiento"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 409\", () => pm.response.to.have.status(409));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "09 - Eliminar registro de prueba",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 204\", () => pm.response.to.have.status(204));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "10 - Traer eliminado (404)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "11 - Editar eliminado (404)",
+          "request": {
+            "method": "PUT",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}",
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nombre\": \"Prueba Postman\",\n  \"marca\": \"Technogym\",\n  \"anioCompra\": 2019,\n  \"enMantenimiento\": false\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            }
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "12 - Eliminar inexistente (404)",
+          "request": {
+            "method": "DELETE",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "name": "13 - mantenimiento inexistente (404)",
+          "request": {
+            "method": "PUT",
+            "header": [],
+            "url": "{{baseUrl}}/api/maquina/{{maquinaId}}/mantenimiento"
+          },
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "pm.test(\"Estado 404\", () => pm.response.to.have.status(404));"
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
