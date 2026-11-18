@@ -1,8 +1,0 @@
-puce\verterinaria\repository\MedicamentoRepository.class
-puce\verterinaria\controller\MedicamentoController.class
-puce\verterinaria\controller\VeterinarioController.class
-puce\verterinaria\model\Veterinario.class
-puce\verterinaria\repository\VeterinarioRepository.class
-puce\verterinaria\services\MedicamentoService.class
-puce\verterinaria\services\VeterinarioService.class
-puce\verterinaria\model\Medicamento.class

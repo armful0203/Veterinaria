@@ -196,6 +196,16 @@ Ejecutar únicamente las pruebas de servicios, sin conexión a la base:
 .\mvnw.cmd "-Dtest=MedicamentoServiceTests,VeterinarioServiceTests" test
 ```
 
+Ejecutar las pruebas de servicios y de los tres controladores, sin PostgreSQL:
+
+```powershell
+.\mvnw.cmd "-Dtest=ApiControllerTests,MedicamentoServiceTests,VeterinarioServiceTests" test
+```
+
+`ApiControllerTests` utiliza Spring MVC y los servicios reales con repositorios dobles en memoria.
+Comprueba las rutas HTTP, los cuerpos JSON, el CRUD, los filtros y los errores `400`, `404` y `409`.
+Estas pruebas no comprueban las consultas JPA ni la persistencia en PostgreSQL.
+
 Ejecutar todas las pruebas, incluida la carga del contexto con PostgreSQL configurado:
 
 ```powershell
@@ -215,12 +225,17 @@ Para generar el archivo JAR con las pruebas completas:
 | Compilación del código de aplicación y de pruebas | Correcta |
 | Pruebas unitarias de `MedicamentoService` | 4 aprobadas |
 | Pruebas unitarias de `VeterinarioService` | 3 aprobadas |
+| Pruebas HTTP de los tres controladores con repositorios en memoria | 3 aprobadas |
 | Sintaxis del JSON de Postman y XML de `pom.xml` | Validada |
 | Ejecución del SQL en una base vacía | Pendiente |
 | Ejecución completa de Postman contra PostgreSQL | Pendiente |
-| Prueba de carga del contexto con PostgreSQL | Pendiente |
+| Prueba de carga del contexto con PostgreSQL | Intentada; falló al obtener metadatos JDBC en este entorno |
 
 La compilación y las siete pruebas de servicios se ejecutaron con una copia local de Maven en modo offline. La primera descarga mediante el wrapper estuvo bloqueada por resolución del nombre `repo.maven.apache.org`.
+
+Revisión del 18 de noviembre de 2026: diez pruebas aprobadas, sin fallos ni errores, al ejecutar servicios y controladores.
+La comprobación directa con `psql` y la petición a `localhost:9090` fueron rechazadas por permisos de sockets
+del entorno de revisión. No se confirmó aquí el arranque completo ni se ejecutó el script SQL.
 
 ## Evidencias de la tarea
 
@@ -236,5 +251,9 @@ Guardar las imágenes en `docs/capturas/` y agregarlas a esta sección después 
 ## Contenido para GitHub
 
 Usar como raíz del repositorio esta carpeta, que contiene `pom.xml`, `src/`, `database/`, `postman/` y `README.md`. El archivo `.gitignore` incluye `target/` y archivos del IDE.
+
+En la revisión se encontraron archivos de `target/`, `.idea/` y `output/` ya registrados en Git.
+Agregar `.gitignore` no retira archivos que Git ya sigue. Antes de publicar, revisar `git ls-files` y
+retirar del índice los archivos de compilación, del IDE y las salidas ajenas al proyecto; conservar las copias locales que se necesiten.
 
 Antes de entregar, verificar la ejecución desde un clon nuevo y una base de prueba vacía, y completar las evidencias pendientes.
